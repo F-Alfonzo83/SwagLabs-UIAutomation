@@ -1,0 +1,5 @@
+environments:
+  testing:
+    login_page: "https://www.saucedemo.com/"
+    products_page: "https://www.saucedemo.com/inventory.html"
+
