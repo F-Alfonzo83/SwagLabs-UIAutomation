@@ -2,4 +2,7 @@ environments:
   testing:
     login_page: "https://www.saucedemo.com/"
     products_page: "https://www.saucedemo.com/inventory.html"
+    product_cart: "https://www.saucedemo.com/cart.html"
+    checkout_information_page: "https://www.saucedemo.com/checkout-step-one.html"
+
 
