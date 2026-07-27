@@ -41,11 +41,11 @@ class ProductsPage(BasePage):
         cart_page = CartPage(self.page, self.logger)
         return cart_page
 
-    def get_product_names(self):
+    def get_products(self):
         product_names = self.inventory_items.locator("[data-test='inventory-item-name']").all_inner_texts()
-        return product_names
-
-    def get_product_prices(self):
         product_prices = self.inventory_items.locator('[data-test="inventory-item-price"]').all_inner_texts()
         prices = [float(price.lstrip("$")) for price in product_prices]
-        return prices
+
+        products = {name : price for name, price in zip(product_names, prices)}
+        return products
+

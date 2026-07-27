@@ -23,7 +23,6 @@ class BasePage(ABC):
         self.PAGE_INDICATOR = None  # Holder
 
     def should_be_open(self):
-        self.logger.info(f"Validating {type(self).__name__} is open")
         self.logger.debug("Validating URL")
         expect(self.page).to_have_url(self.PAGE_URL)
         self.logger.debug("Validating Page Header")
@@ -34,7 +33,7 @@ class BasePage(ABC):
         pass
 
     def should_be_healthy(self):
-        self.logger.info("Validating Open Elements")
+        self.logger.info(f"Validating {type(self).__name__} is open")
         self.should_be_open()
         self.logger.info("Validating Critic Elements")
         self.should_show_critic_elements()

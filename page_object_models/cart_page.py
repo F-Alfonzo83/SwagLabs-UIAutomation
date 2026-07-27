@@ -3,6 +3,7 @@ import playwright.sync_api
 from playwright.sync_api import expect
 from configurations import config_loader
 from page_object_models.basepage import BasePage
+from page_object_models.checkout_info_page import CheckoutInformationPage
 
 config = config_loader.ConfigLoader()
 
@@ -16,8 +17,8 @@ class CartPage(BasePage):
 
         # Page Elements
         self.product_list = self.page.locator("css=div.cart_list")
-        self.checkout_btn = self.page.get_by_role("button", name="Checkout", exact=True)
-        self.continue_shopping_btn = self.page.get_by_role("button", name="Go back Continue Shopping",
+        self.checkout_button = self.page.get_by_role("button", name="Checkout", exact=True)
+        self.continue_shopping_button = self.page.get_by_role("button", name="Go back Continue Shopping",
                                                            exact=True)
         self.quantity_header = self.page.get_by_text("QTY", exact=True)
         self.description_header = self.page.get_by_text("Description", exact=True)
@@ -31,9 +32,9 @@ class CartPage(BasePage):
         self.logger.debug("Softly Validating Item List is present")
         expect.soft(self.product_list).to_be_visible()
         self.logger.debug("Validating Checkout Button is present")
-        expect(self.checkout_btn).to_be_visible()
+        expect(self.checkout_button).to_be_visible()
         self.logger.debug("Validating Continue Shopping Button is present")
-        expect(self.continue_shopping_btn).to_be_visible()
+        expect(self.continue_shopping_button).to_be_visible()
 
     def validate_item_in_cart(self, item: str):
         self.logger.info(f"Validating {item} in cart")
@@ -47,3 +48,8 @@ class CartPage(BasePage):
         self.logger.info(f"Removing: '{item}' from cart")
         self.logger.debug("Clicking on the Remove button")
         self.product_list.filter(has_text=item).get_by_role("button", name="Remove").click()
+
+    def navigate_to_checkout_page(self):
+        self.checkout_button.click()
+        checkout_page = CheckoutInformationPage(self.page, self.logger)
+        return checkout_page

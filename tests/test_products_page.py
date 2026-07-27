@@ -14,14 +14,16 @@ def test_add_item_to_cart(products_page_instance):
 @pytest.mark.parametrize("sort_value", PRODUCT_SORTING_VALUES)
 def test_sorting(products_page_instance, sort_value: str):
     products_page_instance.items_filter.select_option(sort_value)
-    sorted_names = products_page_instance.get_product_names()
-    sorted_prices = products_page_instance.get_product_prices()
+    sorted_products:dict = products_page_instance.get_products()
     logger.debug(f"TEST: Sorting items by value: {sort_value}")
+
     if sort_value == "az":
-        assert sorted_names == sorted(sorted_names)
+        assert list(sorted_products.keys()) == sorted(sorted_products.keys())
     elif sort_value == "za":
-        assert sorted_names == sorted(sorted_names, reverse=True)
+        assert list(sorted_products.keys()) == sorted(sorted_products.keys(), reverse=True)
     elif sort_value == "lohi":
-        assert sorted_prices == sorted(sorted_prices)
+        assert list(sorted_products.values()) == sorted(sorted_products.values())
     elif sort_value == "hilo":
-        assert sorted_prices == sorted(sorted_prices, reverse=True)
+        assert list(sorted_products.values()) == sorted(sorted_products.values(), reverse=True)
+    else:
+        pytest.fail("Sort value not recognized")

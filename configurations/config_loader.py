@@ -37,6 +37,12 @@ class ConfigLoader:
     def checkout_information_page_url(self):
         return self.config_base_yaml["environments"]["testing"]["checkout_information_page"]
 
+    def checkout_overview_page_url(self):
+        return self.config_base_yaml["environments"]["testing"]["checkout_overview_page"]
+
+    def checkout_complete_page_url(self):
+        return self.config_base_yaml["environments"]["testing"]["checkout_complete_page"]
+
 # THIS IS A TESTING AREA
 
 
@@ -46,3 +52,5 @@ if __name__ == "__main__":
     print(config_loader.products_page_url())
     print(config_loader.cart_page_url())
     print(config_loader.checkout_information_page_url())
+    print(config_loader.checkout_overview_page_url())
+    print(config_loader.checkout_complete_page_url())
