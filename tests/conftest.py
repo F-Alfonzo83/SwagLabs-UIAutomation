@@ -1,14 +1,17 @@
 # PyTest Tests configuration File.
+from dataclasses import dataclass
+
 import playwright.sync_api
 import pytest
 from playwright.sync_api import Playwright
 from configurations import config_loader
 from page_object_models.login_page import LoginPage
 from utilities.logger_utility import _logger
-
+from utilities.network import TrafficRecorder
 
 # Import Configurations Loader
 config = config_loader.ConfigLoader()
+
 
 
 @pytest.fixture(scope="function")
@@ -41,3 +44,19 @@ def products_page_instance(browser_instance: playwright.sync_api.Page, request):
     products_page = login_page.submit_login()
     products_page.should_be_healthy()
     yield products_page
+
+@pytest.fixture(scope="function")
+def traffic_network_listener(browser_instance: playwright.sync_api.Page):
+
+    traffic_record = TrafficRecorder()
+
+    browser_instance.on("response", traffic_record._response)
+    browser_instance.on("request", traffic_record._request)
+    browser_instance.on("requestfailed", traffic_record._request_failure)
+
+    yield traffic_record
+    # On return
+    browser_instance.remove_listener("response", traffic_record._response)
+    browser_instance.remove_listener("request", traffic_record._request)
+    browser_instance.remove_listener("requestfailed", traffic_record._request_failure)
+
