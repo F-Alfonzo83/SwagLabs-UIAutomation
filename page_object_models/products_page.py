@@ -36,7 +36,7 @@ class ProductsPage(BasePage):
         expect(self.inventory_items.filter(has_text=item).get_by_role("button", name="Remove")).to_be_visible()
 
     def navigate_to_shopping_cart(self):
-        self.logger.info(f"Navigating to shopping cart page")
+        self.logger.info("Navigating to shopping cart page")
         self.cart_button.click()
         cart_page = CartPage(self.page, self.logger)
         return cart_page
@@ -46,5 +46,5 @@ class ProductsPage(BasePage):
         product_prices = self.inventory_items.locator('[data-test="inventory-item-price"]').all_inner_texts()
         prices = [float(price.lstrip("$")) for price in product_prices]
 
-        products = {name : price for name, price in zip(product_names, prices)}
+        products = {name: price for name, price in zip(product_names, prices)}
         return products

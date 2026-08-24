@@ -3,9 +3,10 @@ from playwright.sync_api import expect
 
 faker = Faker()
 
+
 def test_checkout_flow_single_item(products_page):
     products_page.should_be_healthy()
-    products:dict = products_page.get_products()
+    products: dict = products_page.get_products()
     # Get the Keys. Convert to a list. Get the 1st element (1st product name)
     item_name = list(products.keys())[0]
     products_page.add_item_to_cart(item_name)
@@ -27,10 +28,3 @@ def test_checkout_flow_single_item(products_page):
     checkout_complete_page = checkout_overview_page.finish_checkout()
     checkout_complete_page.should_be_healthy()
     expect(checkout_complete_page.order_complete_header).to_be_visible()
-
-
-
-
-
-
-

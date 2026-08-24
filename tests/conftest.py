@@ -39,6 +39,7 @@ def browser_instance(playwright: Playwright):
     # Close the Browser
     browser.close()
 
+
 @pytest.fixture(scope="function")
 def login_page(browser_instance: playwright.sync_api.Page):
     '''Receives the Browser  instance and navigates to login page.
@@ -51,6 +52,7 @@ def login_page(browser_instance: playwright.sync_api.Page):
     '''
     browser_instance.goto(config.login_page_url())
     yield browser_instance
+
 
 @pytest.fixture(scope="function")
 def products_page(login_page: playwright.sync_api.Page, request):
@@ -65,10 +67,13 @@ def products_page(login_page: playwright.sync_api.Page, request):
     logger = _logger(request.module.__name__)
     login_page = LoginPage(login_page, logger)
     login_page.should_be_healthy()
-    login_page.fill_login_form(username="standard_user", password="secret_sauce")
+    login_page.fill_login_form(username=config.users["standard_user"]["username"],
+                               password=config.users["standard_user"]["password"])
+
     products_page = login_page.submit_login()
     products_page.should_be_healthy()
     yield products_page
+
 
 @pytest.fixture(scope="function")
 def traffic_network_listener(browser_instance: playwright.sync_api.Page):
@@ -84,4 +89,3 @@ def traffic_network_listener(browser_instance: playwright.sync_api.Page):
     browser_instance.remove_listener("response", traffic_record._response)
     browser_instance.remove_listener("request", traffic_record._request)
     browser_instance.remove_listener("requestfailed", traffic_record._request_failure)
-

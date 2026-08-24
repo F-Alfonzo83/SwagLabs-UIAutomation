@@ -1,7 +1,8 @@
-#Utility file for the Network  Traffic Analyzer
+# Utility file for the Network  Traffic Analyzer
 from dataclasses import dataclass
 
-#Collector Dataclasses:
+# Collector Dataclasses:
+
 
 @dataclass
 class RequestInfo:
@@ -9,7 +10,8 @@ class RequestInfo:
     method: str
     resource_type: str
     failure: str | None
-    redirected_from : str | None
+    redirected_from: str | None
+
 
 @dataclass
 class ResponseInfo:
@@ -18,15 +20,16 @@ class ResponseInfo:
     method: str
     resource_type: str
     navigation_request: bool
-    redirect_from : str | None
+    redirect_from: str | None
 
-## Traffic Observers:
+# Traffic Observers:
 
-class  TrafficRecorder():
+
+class TrafficRecorder():
     def __init__(self):
-        self.request_record:list[RequestInfo] = []
-        self.response_record:list[ResponseInfo] = []
-        self.failed_response_record:list[RequestInfo] = []
+        self.request_record: list[RequestInfo] = []
+        self.response_record: list[ResponseInfo] = []
+        self.failed_response_record: list[RequestInfo] = []
 
     def _request(self, request):
         self.request_record.append(RequestInfo(
@@ -45,7 +48,8 @@ class  TrafficRecorder():
             method=response.request.method,
             resource_type=response.request.resource_type,
             navigation_request=response.request.is_navigation_request(),
-            redirect_from=response.request.redirected_from.url if response.request.redirected_from is not None else None,
+            redirect_from=response.request.redirected_from.url if response.request.redirected_from is not None
+            else None,
         ))
 
     # Failed Response:
@@ -67,6 +71,3 @@ class  TrafficRecorder():
                 f"Total Responses: {len(self.response_record)}\n"
                 f"Redirected Responses: {redirects_from_on_response}\n"
                 f"Failed Requests: {len(self.failed_response_record)}\n")
-
-
-

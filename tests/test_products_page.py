@@ -14,7 +14,7 @@ def test_add_item_to_cart(products_page):
 @pytest.mark.parametrize("sort_value", PRODUCT_SORTING_VALUES)
 def test_sorting(products_page, sort_value: str):
     products_page.items_filter.select_option(sort_value)
-    sorted_products:dict = products_page.get_products()
+    sorted_products: dict = products_page.get_products()
     logger.debug(f"TEST: Sorting items by value: {sort_value}")
 
     if sort_value == "az":

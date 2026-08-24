@@ -7,14 +7,15 @@ from page_object_models.checkout_complete_page import CheckoutCompletePage
 
 config = config_loader.ConfigLoader()
 
+
 class CheckoutOverviewPage(BasePage):
-    def __init__(self, page:playwright.sync_api.Page, logger:logging.Logger):
+    def __init__(self, page: playwright.sync_api.Page, logger: logging.Logger):
         super().__init__(page, logger)
 
         self.PAGE_URL = config.checkout_overview_page_url()
         self.PAGE_INDICATOR = self.page.locator('[data-test="title"]')
 
-        #Locators:
+        # Locators:
         self.cancel_button = self.page.get_by_role(role="button", name="Go back Cancel")
         self.finish_button = self.page.get_by_role(role="button", name="Finish")
         self.cart_items_container = self.page.locator('[data-test="cart-list"]')
@@ -53,6 +54,3 @@ class CheckoutOverviewPage(BasePage):
 
     def get_total(self):
         return float(self.total.inner_text().split("$")[-1])
-
-
-
