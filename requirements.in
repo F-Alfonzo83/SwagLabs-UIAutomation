@@ -1,0 +1,7 @@
+autopep8
+Faker
+playwright
+pip-tools
+pytest
+pytest-playwright
+PyYAML

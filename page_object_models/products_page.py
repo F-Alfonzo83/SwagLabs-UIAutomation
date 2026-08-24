@@ -22,9 +22,6 @@ class ProductsPage(BasePage):
         self.inventory_items = self.page.locator('[data-test="inventory-item"]')
         self.items_filter = self.page.get_by_role("combobox")
 
-        # Page Information
-        self.products = None
-
     def should_show_critic_elements(self):
         expect(self.menu_button).to_be_visible()
         expect(self.cart_button).to_be_visible()
@@ -44,11 +41,10 @@ class ProductsPage(BasePage):
         cart_page = CartPage(self.page, self.logger)
         return cart_page
 
-    def get_products(self):
+    def get_products(self) -> dict:
         product_names = self.inventory_items.locator("[data-test='inventory-item-name']").all_inner_texts()
         product_prices = self.inventory_items.locator('[data-test="inventory-item-price"]').all_inner_texts()
         prices = [float(price.lstrip("$")) for price in product_prices]
 
         products = {name : price for name, price in zip(product_names, prices)}
-        self.products = products
-
+        return products

@@ -1,6 +1,3 @@
-# PyTest Tests configuration File.
-from dataclasses import dataclass
-
 import playwright.sync_api
 import pytest
 from playwright.sync_api import Playwright
@@ -13,9 +10,18 @@ from utilities.network import TrafficRecorder
 config = config_loader.ConfigLoader()
 
 
-
 @pytest.fixture(scope="function")
 def browser_instance(playwright: Playwright):
+    '''Creates  a bare  browser instance.
+
+    The Instance returned  is  clean, this allows to add, or not, a network traffic  listener
+
+    Args:
+        playwright: Playwright
+
+    Returns:
+    page: (Playwright.sync_api.Page): A page  Object
+    '''
     # Set the Browser (Firefox, Chromium, etc)
     firefox = playwright.firefox
     # Launch the Browser
@@ -24,7 +30,6 @@ def browser_instance(playwright: Playwright):
     context = browser.new_context()
     # Create a new page within the context
     page = context.new_page()
-    page.goto(config.login_page_url())
 
     # Pass the Page to the test
     yield page
@@ -34,11 +39,31 @@ def browser_instance(playwright: Playwright):
     # Close the Browser
     browser.close()
 
+@pytest.fixture(scope="function")
+def login_page(browser_instance: playwright.sync_api.Page):
+    '''Receives the Browser  instance and navigates to login page.
+
+    Args:
+        browser_instance: Playwright.sync_api.Page
+
+    Returns:
+        login_page: (Playwright.sync_api.Page): A page  Object for  the Login page.
+    '''
+    browser_instance.goto(config.login_page_url())
+    yield browser_instance
 
 @pytest.fixture(scope="function")
-def products_page_instance(browser_instance: playwright.sync_api.Page, request):
+def products_page(login_page: playwright.sync_api.Page, request):
+    '''Returns a products page.
+
+    Args:
+        login_page: Playwright.sync_api.Page
+
+    Returns:
+        products_page: Playwright.sync_api.Page
+    '''
     logger = _logger(request.module.__name__)
-    login_page = LoginPage(browser_instance, logger)
+    login_page = LoginPage(login_page, logger)
     login_page.should_be_healthy()
     login_page.fill_login_form(username="standard_user", password="secret_sauce")
     products_page = login_page.submit_login()

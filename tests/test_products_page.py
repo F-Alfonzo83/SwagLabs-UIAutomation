@@ -6,15 +6,15 @@ logger = _logger(__name__)
 PRODUCT_SORTING_VALUES = ["az", "za", "lohi", "hilo"]
 
 
-def test_add_item_to_cart(products_page_instance):
+def test_add_item_to_cart(products_page):
     logger.debug("TEST: Adding item to Cart")
-    products_page_instance.add_item_to_cart("Sauce Labs Backpack")
+    products_page.add_item_to_cart("Sauce Labs Backpack")
 
 
 @pytest.mark.parametrize("sort_value", PRODUCT_SORTING_VALUES)
-def test_sorting(products_page_instance, sort_value: str):
-    products_page_instance.items_filter.select_option(sort_value)
-    sorted_products:dict = products_page_instance.get_products()
+def test_sorting(products_page, sort_value: str):
+    products_page.items_filter.select_option(sort_value)
+    sorted_products:dict = products_page.get_products()
     logger.debug(f"TEST: Sorting items by value: {sort_value}")
 
     if sort_value == "az":
