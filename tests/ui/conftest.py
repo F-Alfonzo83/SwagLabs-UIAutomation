@@ -66,9 +66,10 @@ def products_page(login_page: playwright.sync_api.Page, request):
     '''
     logger = _logger(request.module.__name__)
     login_page = LoginPage(login_page, logger)
+    user = config.get_user(config_loader.UserRole.STANDARD_USER)
     login_page.should_be_healthy()
-    login_page.fill_login_form(username=config.users["standard_user"]["username"],
-                               password=config.users["standard_user"]["password"])
+    login_page.fill_login_form(username=user.username,
+                               password=user.password)
 
     products_page = login_page.submit_login()
     products_page.should_be_healthy()

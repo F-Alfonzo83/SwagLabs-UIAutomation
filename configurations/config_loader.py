@@ -2,6 +2,16 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 import yaml
+from enum import StrEnum
+
+
+class UserRole(StrEnum):
+    STANDARD_USER = "standard_user"
+    LOCKED_OUT_USER = "locked_out_user"
+    PROBLEM_USER = "problem_user"
+    PERFORMANCE_GLITCH_USER = "performance_glitch_user"
+    ERROR_USER = "error_user"
+    VISUAL_USER = "visual_user"
 
 
 @dataclass
@@ -58,7 +68,7 @@ class ConfigLoader:
     def checkout_complete_page_url(self):
         return self.paths["environments"]["testing"]["checkout_complete_page"]
 
-    def get_user(self, user_role: str):
+    def get_user(self, user_role: UserRole) -> User:
         try:
             selected_user = self.users[user_role]
         except KeyError:
@@ -81,4 +91,4 @@ if __name__ == "__main__":
     print(config_loader.checkout_complete_page_url())
     print(config_loader.paths)
     print(config_loader.users)
-    print(config_loader.get_user("standard_user"))
+    print(config_loader.get_user(UserRole.STANDARD_USER))

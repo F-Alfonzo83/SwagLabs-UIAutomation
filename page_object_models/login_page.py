@@ -33,11 +33,11 @@ class LoginPage(BasePage):
     def fill_login_form(self, username=None, password=None):
         self.logger.info(f"Filling username field: {username}")
         self.username_field.fill(username)
-        self.logger.info(f"Filling password field")
+        self.logger.info("Filling password field")
         self.password_field.fill(password)
 
     def submit_login(self):
-        self.logger.info(f"Submitting login info")
+        self.logger.info("Submitting login info")
         self.login_button.click()
         products_page = ProductsPage(self.page, self.logger)
         return products_page

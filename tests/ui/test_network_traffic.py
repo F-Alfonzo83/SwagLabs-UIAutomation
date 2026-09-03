@@ -1,14 +1,14 @@
 from page_object_models.login_page import LoginPage
 from utilities.assertions_helper import traffic_errors, unexpected_failure
 from utilities.logger_utility import _logger
-from configurations.config_loader import ConfigLoader
+from configurations.config_loader import ConfigLoader, UserRole
 
 logger = _logger(__name__)
 config = ConfigLoader()
 
 
 def test_network_traffic(login_page, traffic_network_listener):
-    user = config.get_user("standard_user")
+    user = config.get_user(UserRole.STANDARD_USER)
 
     login_page = LoginPage(login_page, logger)
     login_page.should_be_healthy()
