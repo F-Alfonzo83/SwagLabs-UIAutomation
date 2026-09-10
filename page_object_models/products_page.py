@@ -42,9 +42,17 @@ class ProductsPage(BasePage):
         return cart_page
 
     def get_products(self) -> dict:
-        product_names = self.inventory_items.locator("[data-test='inventory-item-name']").all_inner_texts()
-        product_prices = self.inventory_items.locator('[data-test="inventory-item-price"]').all_inner_texts()
-        prices = [float(price.lstrip("$")) for price in product_prices]
+        expect(self.inventory_items).not_to_have_count(0)
 
-        products = {name: price for name, price in zip(product_names, prices)}
+        products = {}
+        for item in self.inventory_items.all():
+            item_name = item.locator("[data-test='inventory-item-name']").inner_text()
+            item_price = item.locator("[data-test='inventory-item-price']").inner_text().lstrip("$")
+            if not item_name:
+                raise ValueError(f"Item name is required.  Obtained: {item_name!r}")
+            if not item_price:
+                raise ValueError(f"Item price is required. Obtained: {item_price!r}")
+            if item_name in products:
+                raise ValueError(f"Item name '{item_name}' is already taken")
+            products[item_name] = float(item_price)
         return products

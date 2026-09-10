@@ -77,8 +77,49 @@ def products_page(login_page: playwright.sync_api.Page, request):
 
 
 @pytest.fixture(scope="function")
-def traffic_network_listener(browser_instance: playwright.sync_api.Page):
+def recorded_login_page(browser_instance, traffic_network_listener):
+    """Creates a Login Page that is recorded by the  NetworkTrafficListener.
 
+    Args:
+        browser_instance: Playwright.sync_api.Page
+        traffic_network_listener: TrafficRecorder
+
+    Returns:
+        browser_instance: Playwright.sync_api.Page
+
+    Notes:
+        This  fixture does not depend on LoginPage,  it creates a recorded sibling of it.
+        The purpose is to  make sure to have a Login Page where the TrafficRecorder is attached
+        before any page loads, where the order of calling the fixtures on the test does not affect
+        the objective.
+    """
+    browser_instance.goto(config.login_page_url())
+    yield browser_instance
+
+
+@pytest.fixture(scope="function")
+def traffic_network_listener(browser_instance: playwright.sync_api.Page):
+    """Creates and attach a traffic network listener.
+
+    This  traffic network listener keeps  tracks of all records, within a  list of Dataclasses.
+    Before running, it asserts that no page has been loader
+
+    Args:
+        browser_instance: Playwright.sync_api.Page
+
+    Examples:
+        traffic_network_listener.response_record
+        traffic_network_listener.request_record
+
+    Raises:
+        AssertionError: If a poge has been loaded before attaching the listener
+
+    Returns:
+        traffic_network_listener: TrafficRecorder
+    """
+
+    assert browser_instance.url == "about:blank", \
+        f"Fixture Error: A page has been loaded before attaching the listener: {browser_instance.url}"
     traffic_record = TrafficRecorder()
 
     browser_instance.on("response", traffic_record._response)

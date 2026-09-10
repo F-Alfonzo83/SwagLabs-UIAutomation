@@ -66,8 +66,13 @@ class TrafficRecorder():
         redirects_from_on_requests = [request for request in self.request_record if request.redirected_from is not None]
         redirects_from_on_response = [request for request in self.response_record if request.redirect_from is not None]
 
+        requests = [(request.url, request.method, request.resource_type) for request in self.request_record]
+        responses = [(response.url, response.method, response.resource_type) for response in self.response_record]
+
         return (f"Total Requests: {len(self.request_record)}\n"
+                f"Request Information: {requests}\n"
                 f"Redirected Requests: {redirects_from_on_requests}\n"
                 f"Total Responses: {len(self.response_record)}\n"
+                f"Response Information: {responses}\n"
                 f"Redirected Responses: {redirects_from_on_response}\n"
                 f"Failed Requests: {len(self.failed_response_record)}\n")
