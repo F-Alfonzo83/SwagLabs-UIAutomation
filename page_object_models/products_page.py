@@ -53,6 +53,6 @@ class ProductsPage(BasePage):
             if not item_price:
                 raise ValueError(f"Item price is required. Obtained: {item_price!r}")
             if item_name in products:
-                raise ValueError(f"Item name '{item_name}' is already taken")
+                raise ValueError(f"Item name {item_name!r} is already taken")
             products[item_name] = float(item_price)
         return products

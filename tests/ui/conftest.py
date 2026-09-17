@@ -88,10 +88,11 @@ def recorded_login_page(browser_instance, traffic_network_listener):
         browser_instance: Playwright.sync_api.Page
 
     Notes:
-        This  fixture does not depend on LoginPage,  it creates a recorded sibling of it.
         The purpose is to  make sure to have a Login Page where the TrafficRecorder is attached
-        before any page loads, where the order of calling the fixtures on the test does not affect
-        the objective.
+        before any page loads.
+        This fixture becomes a 'sibling' of 'login_page' both depending on 'browser_instance'.
+        Since it depends on 'traffic_network_listener', it ensures that the listener is attached before
+        any page loads, avoiding issues with fixture calling orders.
     """
     browser_instance.goto(config.login_page_url())
     yield browser_instance
