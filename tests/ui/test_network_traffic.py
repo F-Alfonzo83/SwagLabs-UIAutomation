@@ -124,3 +124,8 @@ def test_inventory_page_product_image_count(traffic_network_listener, recorded_l
                                                           f"the images response requests: "
                                                           f"{items_in_page} != {len(product_image_response)}\n"
                                                           f"{matched_urls}")
+
+
+def test_images_are_aborted_with_no_responses(blocked_images_products_page, image_request_blocker):
+    blocked_images_products_page.should_be_healthy()
+    logger.debug(image_request_blocker.matched_urls)

@@ -1,13 +1,33 @@
 import playwright.sync_api
 import pytest
+
 from playwright.sync_api import Playwright
 from configurations import config_loader
+
 from page_object_models.login_page import LoginPage
+from page_object_models.products_page import ProductsPage
 from utilities.logger_utility import _logger
 from utilities.network import TrafficRecorder
+from utilities.router import RouterActions
 
 # Import Configurations Loader
 config = config_loader.ConfigLoader()
+
+# Not a fixture
+
+
+def perform_login_actions(page,  logger) -> ProductsPage:
+
+    login_page = LoginPage(page, logger)
+    user = config.get_user(config_loader.UserRole.STANDARD_USER)
+    login_page.should_be_healthy()
+    login_page.fill_login_form(username=user.username,
+                               password=user.password)
+
+    products_page = login_page.submit_login()
+    products_page.should_be_healthy()
+
+    return products_page
 
 
 @pytest.fixture(scope="function")
@@ -65,14 +85,9 @@ def products_page(login_page: playwright.sync_api.Page, request):
         products_page: Playwright.sync_api.Page
     '''
     logger = _logger(request.module.__name__)
-    login_page = LoginPage(login_page, logger)
-    user = config.get_user(config_loader.UserRole.STANDARD_USER)
-    login_page.should_be_healthy()
-    login_page.fill_login_form(username=user.username,
-                               password=user.password)
 
-    products_page = login_page.submit_login()
-    products_page.should_be_healthy()
+    products_page = perform_login_actions(login_page, logger)
+
     yield products_page
 
 
@@ -132,3 +147,26 @@ def traffic_network_listener(browser_instance: playwright.sync_api.Page):
     browser_instance.remove_listener("response", traffic_record._response)
     browser_instance.remove_listener("request", traffic_record._request)
     browser_instance.remove_listener("requestfailed", traffic_record._request_failure)
+
+
+@pytest.fixture(scope="function")
+def image_request_blocker(browser_instance: playwright.sync_api.Page, traffic_network_listener):
+    GLOB = '**/*.{png,jpg,jpeg,svg}'
+
+    router_action = RouterActions()
+    browser_instance.route(GLOB, router_action.block_images)
+
+    yield router_action
+
+    browser_instance.unroute(GLOB, router_action.block_images)
+
+
+@pytest.fixture(scope="function")
+def blocked_images_products_page(browser_instance, image_request_blocker,
+                                 request):
+    logger = _logger(request.module.__name__)
+
+    browser_instance.goto(config.login_page_url())
+    products_page = perform_login_actions(browser_instance, logger)
+
+    return products_page

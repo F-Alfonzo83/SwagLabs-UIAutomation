@@ -18,7 +18,7 @@ class CartPage(BasePage):
         # Page Elements
         self.product_list = self.page.locator("css=div.cart_list")
         self.checkout_button = self.page.get_by_role("button", name="Checkout", exact=True)
-        self.continue_shopping_button = self.page.get_by_role("button", name="Go back Continue Shopping",
+        self.continue_shopping_button = self.page.get_by_role("button", name="Continue Shopping",
                                                               exact=True)
         self.quantity_header = self.page.get_by_text("QTY", exact=True)
         self.description_header = self.page.get_by_text("Description", exact=True)
