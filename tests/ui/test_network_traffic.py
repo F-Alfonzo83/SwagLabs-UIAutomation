@@ -1,7 +1,8 @@
 from page_object_models.login_page import LoginPage
-from utilities.assertions_helper import traffic_errors, unexpected_failure, is_first_party
+from utilities.assertions_helper import traffic_errors, unexpected_failure, is_first_party, unexpected_request_failures
 from utilities.logger_utility import _logger
 from configurations.config_loader import ConfigLoader, UserRole
+from utilities.router import RouterActions
 
 logger = _logger(__name__)
 config = ConfigLoader()
@@ -126,6 +127,10 @@ def test_inventory_page_product_image_count(traffic_network_listener, recorded_l
                                                           f"{matched_urls}")
 
 
-def test_images_are_aborted_with_no_responses(blocked_images_products_page, image_request_blocker):
+def test_images_are_aborted_with_no_responses(blocked_images_products_page, traffic_network_listener,
+                                              image_request_blocker: RouterActions):
     blocked_images_products_page.should_be_healthy()
-    logger.debug(image_request_blocker.matched_urls)
+    blocked_images_products_page.page.wait_for_load_state("networkidle")
+    is_expected = unexpected_request_failures(traffic_network_listener.failed_response_record,
+                                              image_request_blocker.matched_urls)
+    logger.debug(is_expected)

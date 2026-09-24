@@ -8,6 +8,30 @@ EXPECTED_FAILURES = ["NS_BINDING_ABORTED"]
 # In case it is  ran on Chrome, add the appropriate exception to the list.
 
 
+def unexpected_request_failures(failed_responses: list[RequestInfo],
+                                image_block: set) -> list[RequestInfo]:
+    """Unit Test for the "unexpected_request_failures" assertion helper.
+
+    Validates that the assertion helper does catch the intended entries based on captured urls and error types
+
+    Args:
+        failed_responses (list[RequestInfo]): A list containing the failed requests  objects
+        image_block (set): A set of strings containing the blocked full urls by the  route instruction.
+
+    Notes:
+        The filter  acts as a net for "acceptable failures".  It matches  for expected error message
+        and for exact url that is pulled the moment the route trigger fires.
+
+    Returns:
+        list[RequestInfo]: a list of RequestInfo objects that did not meet the filter expexta
+    """
+    unexpected = [response for response in
+                  failed_responses if
+                  (response.failure not in ['NS_ERROR_FAILURE'] or
+                   response.url not in image_block)]
+    return unexpected
+
+
 def is_first_party(url: str) -> bool:
     '''Check if the provided url is from first party or external service.
 
