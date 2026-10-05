@@ -75,6 +75,11 @@ CRAFTED_REQUESTS = [RequestInfo(url="https://www.saucedemo.com/inventory.html",
                                 resource_type="image",
                                 failure="NS_ERROR_FAILURE",
                                 redirected_from=None),
+                    RequestInfo(url="https://www.saucedemo.com/assets/sauce-backpack-1200x1500-CjRW-Djj.jpg",
+                                method="GET",
+                                resource_type="image",
+                                failure="NS_BINDING_ABORTED",
+                                redirected_from=None),
 
                     ]
 

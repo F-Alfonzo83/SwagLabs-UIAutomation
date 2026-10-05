@@ -10,25 +10,21 @@ EXPECTED_FAILURES = ["NS_BINDING_ABORTED"]
 
 def unexpected_request_failures(failed_responses: list[RequestInfo],
                                 image_block: set) -> list[RequestInfo]:
-    """Unit Test for the "unexpected_request_failures" assertion helper.
+    """Return the failed requests the image blocker does not account for.
 
-    Validates that the assertion helper does catch the intended entries based on captured urls and error types
+    Will capture any failed response that does not meet the filter (Image Block).
+    A failure is excused only if its URL is in image_block, whatever its failure string
 
     Args:
         failed_responses (list[RequestInfo]): A list containing the failed requests  objects
         image_block (set): A set of strings containing the blocked full urls by the  route instruction.
 
-    Notes:
-        The filter  acts as a net for "acceptable failures".  It matches  for expected error message
-        and for exact url that is pulled the moment the route trigger fires.
-
     Returns:
-        list[RequestInfo]: a list of RequestInfo objects that did not meet the filter expexta
+        list[RequestInfo]: a list of RequestInfo objects that did not meet the filter.
     """
     unexpected = [response for response in
                   failed_responses if
-                  (response.failure not in ['NS_ERROR_FAILURE'] or
-                   response.url not in image_block)]
+                  response.url not in image_block]
     return unexpected
 
 

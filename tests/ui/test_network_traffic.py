@@ -129,8 +129,32 @@ def test_inventory_page_product_image_count(traffic_network_listener, recorded_l
 
 def test_images_are_aborted_with_no_responses(blocked_images_products_page, traffic_network_listener,
                                               image_request_blocker: RouterActions):
+
     blocked_images_products_page.should_be_healthy()
     blocked_images_products_page.page.wait_for_load_state("networkidle")
-    is_expected = unexpected_request_failures(traffic_network_listener.failed_response_record,
-                                              image_request_blocker.matched_urls)
-    logger.debug(is_expected)
+
+    unexpected_failures = unexpected_request_failures(traffic_network_listener.failed_response_record,
+                                                      image_request_blocker.matched_urls)
+
+    # Catches the Valid responses for Images. These should be none (They are blocked)
+    image_responses = [response for response in
+                       traffic_network_listener.response_record if
+                       response.resource_type == "image" and
+                       is_first_party(response.url)]
+
+    # Image URLs that I caught in the failed response record (Blocked)
+    caught_image_urls = set(response.url for response in
+                            traffic_network_listener.failed_response_record if
+                            response.resource_type == "image" and
+                            is_first_party(response.url) and
+                            "/assets/" in response.url)
+
+    # Image URLs that I blocked
+    blocked_image_urls = set(url for url in image_request_blocker.matched_urls
+                             if is_first_party(url)
+                             and "/assets/" in url)
+
+    assert blocked_image_urls
+    assert blocked_image_urls == caught_image_urls
+    assert not image_responses
+    assert not unexpected_failures
