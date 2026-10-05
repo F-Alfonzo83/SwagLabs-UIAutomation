@@ -20,7 +20,7 @@ class CheckoutInformationPage(BasePage):
         self.last_name_field = self.page.locator('[data-test="lastName"]')
         self.postal_code_field = self.page.locator('[data-test="postalCode"]')
 
-        self.cancel_button = self.page.get_by_role(role="button", name="Go back Cancel")
+        self.cancel_button = self.page.get_by_role(role="button", name="Cancel")
         self.continue_button = self.page.get_by_role(role="button", name="Continue")
 
     def should_show_critic_elements(self):

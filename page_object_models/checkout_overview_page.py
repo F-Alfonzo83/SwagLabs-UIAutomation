@@ -16,7 +16,7 @@ class CheckoutOverviewPage(BasePage):
         self.PAGE_INDICATOR = self.page.locator('[data-test="title"]')
 
         # Locators:
-        self.cancel_button = self.page.get_by_role(role="button", name="Go back Cancel")
+        self.cancel_button = self.page.get_by_role(role="button", name="Cancel")
         self.finish_button = self.page.get_by_role(role="button", name="Finish")
         self.cart_items_container = self.page.locator('[data-test="cart-list"]')
         self.subtotal = self.page.locator('[data-test="subtotal-label"]')

@@ -13,9 +13,8 @@ from utilities.router import RouterActions
 # Import Configurations Loader
 config = config_loader.ConfigLoader()
 
+
 # Not a fixture
-
-
 def perform_login_actions(page,  logger) -> ProductsPage:
 
     login_page = LoginPage(page, logger)
