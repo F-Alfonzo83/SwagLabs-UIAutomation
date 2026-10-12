@@ -1,3 +1,5 @@
+import pytest
+
 from page_object_models.login_page import LoginPage
 from utilities.assertions_helper import traffic_errors, unexpected_failure, is_first_party, unexpected_request_failures
 from utilities.logger_utility import _logger
@@ -127,8 +129,10 @@ def test_inventory_page_product_image_count(traffic_network_listener, recorded_l
                                                           f"{matched_urls}")
 
 
+@pytest.mark.parametrize("abort_error_code", ["failed", "timedout", "connectionrefused",
+                                              "internetdisconnected"])
 def test_images_are_aborted_with_no_responses(blocked_images_products_page, traffic_network_listener,
-                                              image_request_blocker: RouterActions):
+                                              image_request_blocker: RouterActions, abort_error_code):
 
     blocked_images_products_page.should_be_healthy()
     blocked_images_products_page.page.wait_for_load_state("networkidle")
@@ -154,6 +158,10 @@ def test_images_are_aborted_with_no_responses(blocked_images_products_page, traf
                              if is_first_party(url)
                              and "/assets/" in url)
 
+    logger.debug(f"TEST INFO: Abort error code: {abort_error_code!r}")
+    error_messages = ([[request.failure, request.url] for request in traffic_network_listener.failed_response_record
+                       if request.url in blocked_image_urls])
+    logger.debug(f"TEST INFO: Error Messages: {error_messages}")
     assert blocked_image_urls
     assert blocked_image_urls == caught_image_urls
     assert not image_responses
