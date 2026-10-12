@@ -8,7 +8,7 @@ from page_object_models.login_page import LoginPage
 from page_object_models.products_page import ProductsPage
 from utilities.logger_utility import _logger
 from utilities.network import TrafficRecorder
-from utilities.router import RouterActions
+from utilities.router import RouterActions, AbortErrorCode
 
 # Import Configurations Loader
 config = config_loader.ConfigLoader()
@@ -149,10 +149,28 @@ def traffic_network_listener(browser_instance: playwright.sync_api.Page):
 
 
 @pytest.fixture(scope="function")
-def image_request_blocker(browser_instance: playwright.sync_api.Page, traffic_network_listener):
+def abort_error_code() -> AbortErrorCode:
+    """Provides a router error code for the image request blocker.
+
+    The image_request_blocker may receive different error codes depending on the purpose of the test.
+    The fixture allows the test to parametrize the intended error code and sets "failed" as the default value.
+
+    Returns:
+        AbortErrorCode: Error code for the router
+
+    Examples:
+        @pytest.mark.parametrize("abort_error_code", ["timedout"])
+        def test(image_request_blocker)
+    """
+    return "failed"
+
+
+@pytest.fixture(scope="function")
+def image_request_blocker(browser_instance: playwright.sync_api.Page, traffic_network_listener,
+                          abort_error_code):
     GLOB = '**/*.{png,jpg,jpeg,svg}'
 
-    router_action = RouterActions()
+    router_action = RouterActions(abort_error_code)
     browser_instance.route(GLOB, router_action.block_images)
 
     yield router_action
